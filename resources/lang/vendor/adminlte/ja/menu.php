@@ -1,0 +1,36 @@
+<?php
+
+return [
+
+    'main_navigation'               => 'メインメニュー',
+    'blog'                          => 'ブログ',
+    'pages'                         => 'ページ',
+    'account_settings'              => 'アカウント設定',
+    'profile'                       => 'プロフィール',
+    'change_password'               => 'パスワード変更',
+    'multilevel'                    => 'マルチ階層',
+    'level_one'                     => '階層 1',
+    'level_two'                     => '階層 2',
+    'level_three'                   => '階層 3',
+    'labels'                        => 'ラベル',
+    'important'                     => '重要',
+    'warning'                       => '警告',
+    'information'                   => 'インフォメーション',
+
+    'about'                         => config('app.name') . 'について',
+    'admin_menu'                    => '管理者メニュー',
+    'andon'                         => 'アンドン',
+    'config'                        => '設定',
+    'home'                          => 'ホーム',
+    'history'                       => '稼働履歴',
+    'menu'                          => 'メニュー',
+    'planned_outage'                => '計画停止時間',
+    'other'                         => 'その他',
+    'process'                       => '工程',
+    'part_number'                   => '品番',
+    'raspberry_pi'                  => 'ラズベリーパイ',
+    'search'                        => '検索',
+    'switch_part_number'            => '品番切り替え',
+    'user'                          => 'ユーザー',
+    'worker'                        => '作業者',
+];
