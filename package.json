@@ -1,0 +1,42 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production"
+    },
+    "devDependencies": {
+        "@fortawesome/fontawesome-free": "^6.1.2",
+        "@popperjs/core": "^2.10.2",
+        "@types/chart.js": "^2.9.37",
+        "autoprefixer": "^10.4.5",
+        "axios": "^0.27",
+        "bootstrap": "~4.6.0",
+        "bootstrap-colorpicker": "^3.4.0",
+        "bootstrap-switch": "^3.4.0",
+        "chart.js": "^3.9.1",
+        "chartjs-adapter-moment": "^1.0.0",
+        "datatables.net-bs4": "^1.12.1",
+        "daterangepicker": "^3.1.0",
+        "dseg": "^0.46.0",
+        "icheck-bootstrap": "^3.0.1",
+        "jquery": "^3.6.0",
+        "jquery-ui": "^1.13.2",
+        "laravel-echo": "^1.13.1",
+        "laravel-mix": "^6.0.49",
+        "lodash": "^4.17.19",
+        "moment": "^2.29.4",
+        "overlayscrollbars": "~1.13.0",
+        "postcss": "^8.1.14",
+        "pusher-js": "^7.4.0",
+        "resolve-url-loader": "^5.0.0",
+        "sass": "^1.32.11",
+        "sass-loader": "^11.0.1",
+        "slick-carousel": "^1.8.1",
+        "toastr": "^2.1.4"
+    }
+}
