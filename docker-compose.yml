@@ -3,14 +3,14 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/base/Dockerfile
     image: laravel-app
     container_name: laravel-app
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
-      - .:/var/www/html
-      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./app/laravel:/var/www/html
+      - ./docker/app/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     ports:
       - 18080:80
     networks:
