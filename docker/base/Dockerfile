@@ -28,13 +28,13 @@ RUN docker-php-ext-install pdo_mysql mysqli mbstring exif pcntl bcmath gd
 RUN a2enmod rewrite
 
 # Copy Apache configuration file
-COPY docker/apache/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/app/apache/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # Copy existing application directory contents
-COPY . /var/www/html
+COPY app/laravel /var/www/html
 
 # Copy existing application directory permissions
-COPY --chown=www-data:www-data . /var/www/html
+COPY --chown=www-data:www-data app/laravel /var/www/html
 
 # Expose port 80
 EXPOSE 80
