@@ -1,37 +1,51 @@
-version: '3.8'
 services:
-  app:
+  web-app:
     build:
       context: .
       dockerfile: docker/base/Dockerfile
-    image: laravel-app
-    container_name: laravel-app
+    image: yokakit-web-app
+    container_name: yokakit-web-app
     restart: unless-stopped
     working_dir: /var/www/html
+    environment:
+      APACHE_LOG_DIR: /var/log/apache2
+    depends_on:
+      db:
+        condition: service_healthy
     volumes:
       - ./app/laravel:/var/www/html
       - ./docker/app/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     ports:
       - 18080:80
+      - 6001:6001
+    extra_hosts:
+      - host.docker.internal:host-gateway
     networks:
-      - laravel
+      - yokakit
 
   db:
     image: mariadb:10.11.4
-    container_name: mariadb
+    container_name: yokakit-db
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
-      MYSQL_DATABASE: yokakit
-      MYSQL_ROOT_PASSWORD: yokakit
-      MYSQL_USER: yokakit
-      MYSQL_PASSWORD: yokakit
+      MARIADB_DATABASE: ${DB_DATABASE:-yokakit}
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD:-yokakit}
+      MARIADB_USER: ${DB_USERNAME:-yokakit}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-yokakit}
     volumes:
       - dbdata:/var/lib/mysql
+      #- ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf # my.cnf ファイルが準備できたらコメントを外してください
     networks:
-      - laravel
+      - yokakit
 
 networks:
-  laravel:
+  yokakit:
+    driver: bridge
 
 volumes:
   dbdata:
