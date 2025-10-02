@@ -119,7 +119,7 @@ class SensorService
         }
         $sensorEvent = $this->sensorEvent->save($sensor, $ipAddress, $signal, $value);
         if (!is_null($sensorEvent)) {
-            Slack::send(__($sensorEvent->is_start ? 'pinkieit.start_alarm_notification' : 'pinkieit.stop_alarm_notification', [
+            Slack::send(__($sensorEvent->is_start ? 'yokakit.start_alarm_notification' : 'yokakit.stop_alarm_notification', [
                 'process' => $sensor->process->process_name,
                 'event' => $sensorEvent->alarm_text,
             ]));
