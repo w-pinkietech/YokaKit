@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: laravel-app
+    container_name: laravel-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    ports:
+      - 18080:80
+    networks:
+      - laravel
+
+  db:
+    image: mariadb:10.11.4
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: yokakit
+      MYSQL_ROOT_PASSWORD: yokakit
+      MYSQL_USER: yokakit
+      MYSQL_PASSWORD: yokakit
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - laravel
+
+networks:
+  laravel:
+
+volumes:
+  dbdata:
