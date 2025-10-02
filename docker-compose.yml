@@ -12,6 +12,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      mqtt:
+        condition: service_started
     volumes:
       # - ./app/laravel:/var/www/html # for development only
       - ./docker/app/php/local.ini:/usr/local/etc/php/conf.d/local.ini
@@ -42,6 +44,19 @@ services:
       #- ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf # my.cnf ファイルが準備できたらコメントを外してください
     networks:
       - yokakit
+
+  mqtt:
+    image: eclipse-mosquitto:latest
+    container_name: yokakit_mqtt_broker
+    ports:
+      - "18830:1883"  # MQTT標準ポート
+    networks:
+      - yokakit
+    volumes:
+      - ./mqtt/mosquitto/config:/mosquitto/config
+      - ./mqtt/mosquitto/data:/mosquitto/data
+      - ./mqtt/mosquitto/log:/mosquitto/log
+    restart: unless-stopped
 
 networks:
   yokakit:
