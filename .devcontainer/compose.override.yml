@@ -1,0 +1,28 @@
+services:
+  dev:
+    build:
+      context: ..
+      dockerfile: docker/base/Dockerfile
+      args:
+        ENVIRONMENT: development
+    image: yokakit-dev
+    container_name: yokakit-dev
+    working_dir: /var/www/html
+    environment:
+      APACHE_LOG_DIR: /var/log/apache2
+    depends_on:
+      db:
+        condition: service_healthy
+      mqtt:
+        condition: service_started
+    volumes:
+      - ..:/workspace # Mount project root as workspace
+      - ../app/laravel:/var/www/html
+      - ../docker/app/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    ports:
+      - 18080:80 # Web application
+      - 6001:6001 # Laravel Reverb WebSocket
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    networks:
+      - yokakit
