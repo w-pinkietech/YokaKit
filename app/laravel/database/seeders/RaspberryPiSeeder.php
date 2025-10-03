@@ -17,7 +17,7 @@ class RaspberryPiSeeder extends Seeder
     {
         RaspberryPi::factory()->create([
             'raspberry_pi_name' => '本物',
-            'ip_address' => '10.4.5.188',
+            'ip_address' => '10.4.5.200',
         ]);
     }
 }
