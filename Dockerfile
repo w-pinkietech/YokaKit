@@ -1,129 +1,141 @@
 # Multi-stage Dockerfile for YokaKit
-# Consolidates base and app stages with environment switching
+# Optimized production stage with minimal dependencies
 
 ARG ENVIRONMENT=production
 ARG PHP_VERSION=8.2.27
 
-# Base stage with common dependencies
+# Base stage with common system dependencies and PHP extensions
 FROM php:${PHP_VERSION}-apache AS base
 
-# パッケージインストールを1つのレイヤーに統合
-RUN apt-get update && apt-get install -y \
+# Install build dependencies and tools needed for compilation
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    apt-get update && apt-get install -y \
     build-essential \
     curl \
-    gifsicle \
-    git \
-    jpegoptim \
+    libfreetype6 \
     libfreetype6-dev \
+    libjpeg62-turbo \
     libjpeg62-turbo-dev \
     libmariadb-dev \
     libmariadb-dev-compat \
+    libmariadb3 \
     libonig-dev \
+    libonig5 \
     libpng-dev \
+    libpng16-16 \
     libwebp-dev \
+    libwebp7 \
     libzip-dev \
+    libzip4 \
     locales \
-    optipng \
     pkg-config \
-    pngquant \
     unzip \
-    vim \
-    zip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    zip
 
-# PHP拡張を1つのRUNコマンドに統合
+# Install PHP extensions
 RUN set -ex; \
-    # mbstring拡張
-    CFLAGS="-O0" docker-php-ext-configure mbstring; \
-    docker-php-ext-install -j1 mbstring; \
-    # gd拡張
-    CFLAGS="-O1" docker-php-ext-configure gd \
-    --with-freetype \
-    --with-jpeg \
-    --with-webp; \
-    docker-php-ext-install -j1 gd; \
-    # その他の拡張
-    docker-php-ext-install pdo_mysql exif pcntl bcmath zip; \
-    # PCOV for code coverage
-    pecl install pcov; \
-    docker-php-ext-enable pcov;
+    docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
+    docker-php-ext-install -j$(nproc) gd mbstring pdo_mysql exif pcntl bcmath zip
 
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Node.jsとnpmのインストールを統合
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+# Install Node.js for asset compilation
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
+    # Enable Apache rewrite module
     && a2enmod rewrite
 
 WORKDIR /var/www/html
 
-# Development stage
-FROM base AS development
+# Build stage - extends base with dependency installation and asset building
+FROM base AS builder
 
-# 依存関係ファイルのコピーを統合
-COPY app/laravel/composer.* app/laravel/package*.json ./
-
-# アプリケーションコードのコピー（依存関係インストール前に実行）
-COPY app/laravel .
-
-# Development dependencies
+# Copy dependency files first for better layer caching
+COPY app/laravel/composer.json app/laravel/composer.lock ./
 ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN set -ex \
-    && composer install --optimize-autoloader --no-cache \
-    && npm install \
-    && composer dump-autoload --optimize
 
-# Copy development configuration
-COPY docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
+# Install PHP dependencies without scripts (cached layer if composer files unchanged)
+RUN composer install --no-dev --optimize-autoloader --no-cache --no-scripts
 
-# Development permissions (less restrictive)
-RUN chmod -R 777 storage bootstrap/cache
+# Copy package files and install npm dependencies
+COPY app/laravel/package*.json ./
+RUN npm install
 
-EXPOSE 80
+# Copy source code and build assets
+COPY app/laravel .
+RUN npm run production \
+    && composer dump-autoload --optimize \
+    && rm -rf node_modules
 
-# Production stage
+# Production runtime stage - minimal dependencies
 FROM base AS production
 
-# 依存関係ファイルのコピーを統合
-COPY app/laravel/composer.* app/laravel/package*.json ./
+WORKDIR /var/www/html
 
-# アプリケーションコードのコピー（依存関係インストール前に実行）
-COPY app/laravel .
+# Copy built application from builder stage with proper ownership
+COPY --from=builder --chown=www-data:www-data /var/www/html .
 
-# Production dependencies (install after copying app code to avoid artisan errors)
-ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN set -ex \
-    && composer install --no-dev --optimize-autoloader --no-cache \
-    && npm install \
-    && composer dump-autoload --optimize
-
-# Copy Apache configuration file
+# Copy Apache configuration
 COPY docker/app/apache/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
 
-# Copy .env file
+# Copy environment file
 COPY .env /var/www/html/.env
 
-# Run npm production
-RUN npm run production
+# Set proper permissions for specific directories
+RUN chmod -R 775 storage bootstrap/cache \
+    # Generate application key
+    && php artisan key:generate --force
 
-# Set permissions for storage and bootstrap/cache directories
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html
-
-# Generate application key
-RUN php artisan key:generate --force
-
-# Add startup script
+# Copy and set up startup script
 COPY app/laravel/app-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/app-entrypoint.sh
 
-# Change CMD to use the startup script
+# Use startup script
 CMD ["/usr/local/bin/docker-entrypoint.sh"]
 
 EXPOSE 80
 
-# Final stage - choose environment
+# Development stage - extends base with dev tools and dev dependencies
+FROM base AS development
+
+# Install development tools
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    apt-get update && apt-get install -y \
+    gifsicle \
+    git \
+    jpegoptim \
+    optipng \
+    pngquant \
+    vim
+
+# Install PCOV for code coverage
+RUN pecl install pcov && docker-php-ext-enable pcov
+
+# Copy dependency files and install with dev dependencies
+COPY app/laravel/composer.json app/laravel/composer.lock ./
+ENV COMPOSER_ALLOW_SUPERUSER=1
+RUN composer install --optimize-autoloader --no-cache --no-scripts
+
+# Copy package files and install npm dependencies
+COPY app/laravel/package*.json ./
+RUN npm install
+
+# Copy source code
+COPY app/laravel .
+RUN composer dump-autoload --optimize
+
+# Copy development PHP configuration
+COPY docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
+
+# Development permissions (more permissive)
+RUN chmod -R 777 storage bootstrap/cache
+
+EXPOSE 80
+
+# Final stage selector
 FROM ${ENVIRONMENT} AS final
