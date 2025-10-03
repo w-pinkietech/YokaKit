@@ -131,6 +131,33 @@ class ProcessTest extends TestCase
         $this->assertTrue($this->process->sensors->contains($sensor));
     }
 
+    public function test_sensor_events_relationship_filters_recent_and_triggered(): void
+    {
+        $sensor = Sensor::factory()->create(['process_id' => $this->process->process_id]);
+
+        // Create recent triggered event
+        $recentEvent = SensorEvent::factory()->create([
+            'process_id' => $this->process->process_id,
+            'sensor_id' => $sensor->sensor_id,
+            'at' => now(),
+            'trigger' => true,
+            'signal' => true,
+        ]);
+
+        // Create old event (should be filtered out)
+        SensorEvent::factory()->create([
+            'process_id' => $this->process->process_id,
+            'sensor_id' => $sensor->sensor_id,
+            'at' => now()->subDays(10),
+            'trigger' => true,
+            'signal' => true,
+        ]);
+
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class, $this->process->sensorEvents());
+        $this->assertTrue($this->process->sensorEvents->contains($recentEvent));
+        $this->assertCount(1, $this->process->sensorEvents);
+    }
+
     public function test_on_offs_relationship(): void
     {
         $raspberryPi = RaspberryPi::factory()->create();
@@ -143,6 +170,20 @@ class ProcessTest extends TestCase
         $this->assertTrue($this->process->onOffs->contains($onOff));
     }
 
+    public function test_on_off_events_relationship_limits_recent_events(): void
+    {
+        // Create multiple events
+        for ($i = 0; $i < 15; $i++) {
+            OnOffEvent::factory()->create([
+                'process_id' => $this->process->process_id,
+                'at' => now()->subHours($i),
+            ]);
+        }
+
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class, $this->process->onOffEvents());
+        $this->assertLessThanOrEqual(10, $this->process->onOffEvents->count());
+    }
+
     public function test_production_history_relationship(): void
     {
         $productionHistory = ProductionHistory::factory()->create();
@@ -153,14 +194,14 @@ class ProcessTest extends TestCase
         $this->assertEquals($productionHistory->production_history_id, $this->process->productionHistory->production_history_id);
     }
 
-    public function test_andon_layout_relationship(): void
+    public function test_andon_layout_relationship_with_authenticated_user(): void
     {
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $andonLayout = AndonLayout::create([
-            'process_id' => $this->process->process_id,
             'user_id' => $user->id,
+            'process_id' => $this->process->process_id,
             'is_display' => true,
             'order' => 1,
         ]);
@@ -169,7 +210,7 @@ class ProcessTest extends TestCase
         $this->assertEquals($andonLayout->andon_layout_id, $this->process->andonLayout->andon_layout_id);
     }
 
-    public function test_is_running_when_not_complete(): void
+    public function test_is_running_when_not_stopped(): void
     {
         $productionHistory = ProductionHistory::factory()->create([
             'status' => ProductionStatus::RUNNING(),
@@ -193,6 +234,12 @@ class ProcessTest extends TestCase
         $this->assertTrue($this->process->isStopped());
     }
 
+    public function test_is_stopped_when_no_production_history(): void
+    {
+        $this->assertTrue($this->process->isStopped());
+        $this->assertFalse($this->process->isRunning());
+    }
+
     public function test_is_changeover(): void
     {
         $productionHistory = ProductionHistory::factory()->create([
@@ -204,7 +251,18 @@ class ProcessTest extends TestCase
         $this->assertTrue($this->process->isChangeover());
     }
 
-    public function test_status_returns_production_status(): void
+    public function test_is_not_changeover(): void
+    {
+        $productionHistory = ProductionHistory::factory()->create([
+            'status' => ProductionStatus::RUNNING(),
+        ]);
+        $this->process->update(['production_history_id' => $productionHistory->production_history_id]);
+        $this->process->refresh();
+
+        $this->assertFalse($this->process->isChangeover());
+    }
+
+    public function test_status_returns_production_history_status(): void
     {
         $productionHistory = ProductionHistory::factory()->create([
             'status' => ProductionStatus::RUNNING(),
@@ -220,7 +278,7 @@ class ProcessTest extends TestCase
         $this->assertEquals(ProductionStatus::COMPLETE(), $this->process->status());
     }
 
-    public function test_info_returns_process_data(): void
+    public function test_info_returns_mapped_process_data(): void
     {
         $info = $this->process->info();
 
@@ -229,12 +287,9 @@ class ProcessTest extends TestCase
         $this->assertArrayHasKey('process_name', $info);
         $this->assertArrayHasKey('status', $info);
         $this->assertArrayHasKey('production_history', $info);
-        $this->assertArrayNotHasKey('plan_color', $info);
-        $this->assertArrayNotHasKey('production_history_id', $info);
-        $this->assertArrayNotHasKey('remark', $info);
     }
 
-    public function test_info_includes_production_history_when_exists(): void
+    public function test_info_removes_sensitive_production_history_fields(): void
     {
         $productionHistory = ProductionHistory::factory()->create();
         $this->process->update(['production_history_id' => $productionHistory->production_history_id]);
@@ -242,6 +297,12 @@ class ProcessTest extends TestCase
 
         $info = $this->process->info();
 
+        // Check sensitive fields are removed from main info
+        $this->assertArrayNotHasKey('plan_color', $info);
+        $this->assertArrayNotHasKey('production_history_id', $info);
+        $this->assertArrayNotHasKey('remark', $info);
+
+        // Check sensitive fields are removed from production_history
         $this->assertIsArray($info['production_history']);
         $this->assertArrayNotHasKey('production_history_id', $info['production_history']);
         $this->assertArrayNotHasKey('status', $info['production_history']);
@@ -251,7 +312,7 @@ class ProcessTest extends TestCase
         $this->assertArrayNotHasKey('process_name', $info['production_history']);
     }
 
-    public function test_info_returns_null_production_history_when_none_exists(): void
+    public function test_info_with_null_production_history(): void
     {
         $info = $this->process->info();
 
