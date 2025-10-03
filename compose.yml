@@ -3,9 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: production
+      target: development
       args:
-        ENVIRONMENT: production
+        ENVIRONMENT: development
     image: yokakit-web-app
     container_name: yokakit-web-app
     restart: unless-stopped
