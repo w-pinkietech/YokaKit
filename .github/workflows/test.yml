@@ -26,8 +26,8 @@ jobs:
         env:
           MARIADB_DATABASE: yokakit_test
           MARIADB_USER: yokakit
-          MARIADB_PASSWORD: yokakit123
-          MARIADB_ROOT_PASSWORD: yokakit123
+          MARIADB_PASSWORD: password
+          MARIADB_ROOT_PASSWORD: password
         ports:
           - 3306:3306
         options: >-
