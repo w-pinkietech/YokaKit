@@ -3,6 +3,7 @@
          xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
+         processIsolation="false"
 >
     <testsuites>
         <testsuite name="Unit">
@@ -34,5 +35,7 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="LARAVEL_PARALLEL_TESTING" value="1"/>
+        <env name="LARAVEL_PARALLEL_TESTING_RECREATE_DATABASES" value="1"/>
     </php>
 </phpunit>

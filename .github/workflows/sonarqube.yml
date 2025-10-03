@@ -87,8 +87,8 @@ jobs:
           DB_USERNAME: root
           DB_PASSWORD: password
 
-      - name: Run tests with coverage
-        run: php artisan test --coverage --coverage-clover=coverage/clover.xml
+      - name: Run tests with coverage in parallel
+        run: php artisan test --parallel --processes=4 --coverage --coverage-clover=coverage/clover.xml
         working-directory: app/laravel
         env:
           DB_CONNECTION: mysql
