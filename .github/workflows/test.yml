@@ -98,7 +98,6 @@ jobs:
       - name: Run Migrations
         run: |
           php artisan migrate:fresh --seed
-          php artisan db:seed
         working-directory: app/laravel
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
