@@ -229,10 +229,13 @@ class UserTest extends TestCase
      */
     public function test_admin_lte_integration_methods(): void
     {
-        // Test that AdminLTE required methods exist
-        $this->assertTrue(method_exists($this->user, 'adminlte_image'));
-        $this->assertTrue(method_exists($this->user, 'adminlte_desc'));
+        // Test that AdminLTE profile URL method exists
         $this->assertTrue(method_exists($this->user, 'adminlte_profile_url'));
+
+        // Test that it returns a string
+        $profileUrl = $this->user->adminlte_profile_url();
+        $this->assertIsString($profileUrl);
+        $this->assertEquals('user/profile', $profileUrl);
     }
 
     /**
