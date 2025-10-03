@@ -2,7 +2,10 @@ services:
   web-app:
     build:
       context: .
-      dockerfile: docker/base/Dockerfile
+      dockerfile: Dockerfile
+      target: development
+      args:
+        ENVIRONMENT: development
     image: yokakit-web-app
     container_name: yokakit-web-app
     restart: unless-stopped
@@ -14,12 +17,13 @@ services:
         condition: service_healthy
       mqtt:
         condition: service_started
+    command: ["apache2-foreground"]
     volumes:
-      # - ./app/laravel:/var/www/html # for development only
-      - ./docker/app/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./app/laravel:/var/www/html # for development only
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     ports:
       - 18080:80
-      - 6001:6001
+      - 8080:8080
     extra_hosts:
       - host.docker.internal:host-gateway
     networks:
@@ -30,15 +34,15 @@ services:
     container_name: yokakit-db
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD}" ]
       interval: 10s
       timeout: 5s
       retries: 5
     environment:
       MARIADB_DATABASE: ${DB_DATABASE:-yokakit}
-      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD:-yokakit}
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
       MARIADB_USER: ${DB_USERNAME:-yokakit}
-      MARIADB_PASSWORD: ${DB_PASSWORD:-yokakit}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - dbdata:/var/lib/mysql
       #- ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf # my.cnf ファイルが準備できたらコメントを外してください
@@ -47,7 +51,7 @@ services:
 
   mqtt:
     image: eclipse-mosquitto:latest
-    container_name: yokakit_mqtt_broker
+    container_name: yokakit-mqtt-broker
     ports:
       - "18830:1883"  # MQTT標準ポート
     networks:
