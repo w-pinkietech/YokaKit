@@ -108,24 +108,32 @@ class SwitchService
                 // 生産者を取得
                 $producer = $this->producer->findBy($productionLine->production_line_id);
 
-                $result = true;
-                if (!is_null($producer) && !is_null($workerId) && $producer->worker_id != $workerId) {
-                    // 生産者を入れ替え
-                    $this->producer->stop($producer, $now);
-                    $worker = $this->worker->find($workerId);
-                    $result = $this->producer->save($worker, $productionLine->production_line_id, $now);
-                } else if (is_null($producer) && !is_null($workerId)) {
-                    // 生産者新規登録
-                    $worker = $this->worker->find($workerId);
-                    $result = $this->producer->save($worker, $productionLine->production_line_id, $now);
-                } else if (!is_null($producer) && is_null($workerId)) {
-                    // 生産者不在
-                    $this->producer->stop($producer, $now);
-                }
-                if (!$result) {
-                    throw new Exception();
+                $result = $this->updateProducerWorker($producer, $workerId, $productionLine->production_line_id, $now);
+                if (! $result) {
+                    throw new Exception;
                 }
             }
         });
+    }
+
+    private function updateProducerWorker($producer, ?int $workerId, int $productionLineId, $now): bool
+    {
+        if (! is_null($producer) && ! is_null($workerId) && $producer->worker_id != $workerId) {
+            // 生産者を入れ替え
+            $this->producer->stop($producer, $now);
+            $worker = $this->worker->find($workerId);
+
+            return $this->producer->save($worker, $productionLineId, $now);
+        } elseif (is_null($producer) && ! is_null($workerId)) {
+            // 生産者新規登録
+            $worker = $this->worker->find($workerId);
+
+            return $this->producer->save($worker, $productionLineId, $now);
+        } elseif (! is_null($producer) && is_null($workerId)) {
+            // 生産者不在
+            $this->producer->stop($producer, $now);
+        }
+
+        return true;
     }
 }
