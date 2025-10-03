@@ -1,0 +1,124 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Node.js
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+*.log
+logs
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# PHPUnit coverage
+coverage/
+reports/
+
+# Laravel specific
+/vendor
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/public/*
+bootstrap/cache/*
+.env.local
+.env.*.local
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker files (not needed in build context)
+*Dockerfile*
+*docker-compose*
+.dockerignore
+
+# Development files
+*.md
+README*
+CHANGELOG*
+CONTRIBUTING*
+docs/
+
+# Testing
+tests/
+phpunit.xml
+.phpunit.result.cache
+
+# DevContainer
+.devcontainer/
+
+# Temporary files
+tmp/
+temp/
+
+# MQTT data (runtime generated)
+mqtt/mosquitto/data/*
+mqtt/mosquitto/log/*
+
+# Database dumps
+*.sql
+*.dump
+
+# Cache files
+*.cache
+
+# Laravel Mix
+/public/hot
+/public/storage
+
+# Composer
+composer.phar
+
+# Environment variables
+.env.example
+.env.backup
+.env.production
+.env.testing
+
+# Package files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Local development
+setup.sh
