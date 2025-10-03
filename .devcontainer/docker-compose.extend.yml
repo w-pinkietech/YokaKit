@@ -1,0 +1,30 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+      args:
+        ENVIRONMENT: development
+    image: yokakit-web-app
+    container_name: yokakit-dev
+    working_dir: /var/www/html
+    environment:
+      APACHE_LOG_DIR: /var/log/apache2
+    depends_on:
+      db:
+        condition: service_healthy
+      mqtt:
+        condition: service_started
+    command: apachectl -D FOREGROUND
+    volumes:
+      - .:/workspace
+      - ./app/laravel:/var/www/html
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    ports:
+      - 18081:80
+      - 6002:6001
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    networks:
+      - yokakit
