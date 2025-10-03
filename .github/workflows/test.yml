@@ -1,0 +1,106 @@
+name: Laravel Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ["8.2"]
+    defaults:
+      run:
+        working-directory: app/laravel
+    name: PHP ${{ matrix.php }} - Laravel Tests
+
+    env:
+      php-extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo
+
+    services:
+      mysql:
+        image: mariadb:10.11.4
+        env:
+          MARIADB_DATABASE: yokakit_test
+          MARIADB_USER: yokakit
+          MARIADB_PASSWORD: yokakit123
+          MARIADB_ROOT_PASSWORD: yokakit123
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup cache environment
+        id: ext-cache
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ env.php-extensions }}
+          key: php-ext-cache
+
+      - name: Cache extensions
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.ext-cache.outputs.dir }}
+          key: ${{ steps.ext-cache.outputs.key }}
+          restore-keys: ${{ steps.ext-cache.outputs.key }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ env.php-extensions }}
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.php }}-composer-
+
+      - name: Install Dependencies
+        run: |
+          composer install --no-interaction --no-scripts --no-progress --prefer-dist
+        working-directory: app/laravel
+
+      - name: Copy .env.test
+        run: |
+          cp .env.test .env
+        working-directory: app/laravel
+
+      - name: Generate key
+        run: php artisan key:generate
+        working-directory: app/laravel
+
+      - name: Directory Permissions
+        run: chmod -R 777 storage bootstrap/cache
+        working-directory: app/laravel
+
+      - name: Configure Laravel
+        run: |
+          php artisan config:clear
+          php artisan config:cache
+        working-directory: app/laravel
+
+      - name: Run Migrations
+        run: |
+          php artisan migrate:fresh --seed
+          php artisan db:seed
+        working-directory: app/laravel
+
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
+        run: php artisan test
+        working-directory: app/laravel
