@@ -95,6 +95,7 @@ RUN composer install --optimize-autoloader --no-cache --no-scripts && npm instal
 # Copy source code and configuration
 COPY app/laravel .
 COPY docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
+COPY docker/app/apache/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # Finalize development setup
 RUN composer dump-autoload --optimize \
