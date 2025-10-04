@@ -16,14 +16,14 @@ services:
         condition: service_healthy
       mqtt:
         condition: service_started
-    command: apachectl -D FOREGROUND
+    command: /var/www/html/app-entrypoint.sh
     volumes:
       - .:/workspace
       - ./app/laravel:/var/www/html
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     ports:
       - 18081:80
-      - 6002:6001
+      - 8081:8080
     extra_hosts:
       - host.docker.internal:host-gateway
     networks:
