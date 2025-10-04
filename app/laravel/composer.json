@@ -7,7 +7,6 @@
     "require": {
         "php": "^8.2.0",
         "bensampo/laravel-enum": "^6.0",
-        "beyondcode/laravel-websockets": "^1.13",
         "cerbero/command-validator": "^2.5",
         "diglactic/laravel-breadcrumbs": "^8.0",
         "doctrine/dbal": "^3.6",
