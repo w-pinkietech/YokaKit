@@ -17,7 +17,7 @@ const mix = require('laravel-mix');
 //     },
 // });
 
-mix.setResourceRoot('/yokakit')
+mix.setResourceRoot('/')
     .copy('node_modules/chartjs-adapter-moment/dist/chartjs-adapter-moment.js', 'public/js/chartjs-adapter-moment/chartjs-adapter-moment.js')
     .js([
         'resources/js/app.js',
