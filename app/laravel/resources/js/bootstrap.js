@@ -53,13 +53,13 @@ import Echo from 'laravel-echo';
 window.Pusher = require('pusher-js');
 
 window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: process.env.MIX_PUSHER_APP_KEY,
-    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-    wsHost: window.location.hostname,
-    wsPort: process.env.MIX_PUSHER_PORT,
-    forceTLS: false,
+    broadcaster: 'reverb',
+    key: process.env.MIX_REVERB_APP_KEY || process.env.MIX_PUSHER_APP_KEY,
+    wsHost: process.env.MIX_REVERB_HOST || window.location.hostname,
+    wsPort: process.env.MIX_REVERB_PORT || 8080,
+    wssPort: process.env.MIX_REVERB_PORT || 8080,
+    forceTLS: (process.env.MIX_REVERB_SCHEME ?? 'http') === 'https',
+    enabledTransports: ['ws', 'wss'],
     disableStats: true,
-    enabledTransports: ['ws'],
-    authEndpoint: process.env.MIX_PUSHER_AUTH_URL,
+    authEndpoint: '/broadcasting/auth'
 });
