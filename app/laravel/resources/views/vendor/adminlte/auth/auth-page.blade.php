@@ -1,35 +1,52 @@
 @extends('adminlte::master')
 
-@php($dashboard_url = View::getSection('dashboard_url') ?? config('adminlte.dashboard_url', 'home'))
+@php
+    $authType = $authType ?? 'login';
+    $dashboardUrl = View::getSection('dashboard_url') ?? config('adminlte.dashboard_url', 'home');
 
-@if (config('adminlte.use_route_url', false))
-    @php($dashboard_url = $dashboard_url ? route($dashboard_url) : '')
-@else
-    @php($dashboard_url = $dashboard_url ? url($dashboard_url) : '')
-@endif
+    if (config('adminlte.use_route_url', false)) {
+        $dashboardUrl = $dashboardUrl ? route($dashboardUrl) : '';
+    } else {
+        $dashboardUrl = $dashboardUrl ? url($dashboardUrl) : '';
+    }
+
+    $bodyClasses = "{$authType}-page";
+
+    if (! empty(config('adminlte.layout_dark_mode', null))) {
+        $bodyClasses .= ' dark-mode';
+    }
+@endphp
 
 @section('adminlte_css')
     @stack('css')
     @yield('css')
 @stop
 
-@section('classes_body'){{ ($auth_type ?? 'login') . '-page' }}@stop
+@section('classes_body'){{ $bodyClasses }}@stop
 
 @section('body')
-    <div class="{{ $auth_type ?? 'login' }}-box">
+    <div class="{{ $authType }}-box">
 
         {{-- Logo --}}
-        <div class="{{ $auth_type ?? 'login' }}-logo">
-            <a href="{{ $dashboard_url }}">
+        <div class="{{ $authType }}-logo">
+            <a href="{{ $dashboardUrl }}">
 
                 {{-- Logo Image --}}
                 @if (config('adminlte.auth_logo.enabled', false))
-                    <img src="{{ asset(config('adminlte.auth_logo.img.path')) }}" alt="{{ config('adminlte.auth_logo.img.alt') }}"
-                        @if (config('adminlte.auth_logo.img.class', null)) class="{{ config('adminlte.auth_logo.img.class') }}" @endif
-                        @if (config('adminlte.auth_logo.img.width', null)) width="{{ config('adminlte.auth_logo.img.width') }}" @endif
-                        @if (config('adminlte.auth_logo.img.height', null)) height="{{ config('adminlte.auth_logo.img.height') }}" @endif>
+                    <img src="{{ asset(config('adminlte.auth_logo.img.path')) }}"
+                         alt="{{ config('adminlte.auth_logo.img.alt') }}"
+                         @if (config('adminlte.auth_logo.img.class', null))
+                            class="{{ config('adminlte.auth_logo.img.class') }}"
+                         @endif
+                         @if (config('adminlte.auth_logo.img.width', null))
+                            width="{{ config('adminlte.auth_logo.img.width') }}"
+                         @endif
+                         @if (config('adminlte.auth_logo.img.height', null))
+                            height="{{ config('adminlte.auth_logo.img.height') }}"
+                         @endif>
                 @else
-                    <img src="{{ asset(config('adminlte.logo_img')) }}" alt="{{ config('adminlte.logo_img_alt') }}" height="50">
+                    <img src="{{ asset(config('adminlte.logo_img')) }}"
+                         alt="{{ config('adminlte.logo_img_alt') }}" height="50">
                 @endif
 
                 {{-- Logo Label --}}
@@ -51,7 +68,7 @@
             @endif
 
             {{-- Card Body --}}
-            <div class="card-body {{ $auth_type ?? 'login' }}-card-body {{ config('adminlte.classes_auth_body', '') }}">
+            <div class="card-body {{ $authType }}-card-body {{ config('adminlte.classes_auth_body', '') }}">
                 @yield('auth_body')
             </div>
 

@@ -1,5 +1,3 @@
-@props(['id' => ''])
-
 <div {{ $attributes->merge(['class' => "p-0 col-{$size}"]) }}>
 
     <span class="nav-link">
@@ -11,7 +9,7 @@
 
         {{-- Header --}}
         @isset($title)
-            @if (!empty($url))
+            @if(! empty($url) && $urlTarget === 'title')
                 <a href="{{ $url }}">{{ $title }}</a>
             @else
                 {{ $title }}
@@ -20,8 +18,12 @@
 
         {{-- Text --}}
         @isset($text)
-            <span class="{{ $makeTextWrapperClass() }}" id="{{ $id }}">
-                {{ $text }}
+            <span class="{{ $makeTextWrapperClass() }}">
+                @if(! empty($url) && $urlTarget === 'text')
+                    <a href="{{ $url }}">{{ $text }}</a>
+                @else
+                    {{ $text }}
+                @endif
             </span>
         @endisset
 

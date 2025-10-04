@@ -7,7 +7,7 @@
         @endisset
 
         @isset($text)
-            <h5 class="text-truncate">{{ $text }}</h5>
+            <h5>{{ $text }}</h5>
         @endisset
     </div>
 
@@ -17,10 +17,6 @@
             <i class="{{ $icon }}"></i>
         </div>
     @endisset
-
-    @if(! $slot->isEmpty())
-        <div class="row pl-2 pr-2">{{ $slot }}</div>
-    @endif
 
     {{-- Box link --}}
     @isset($url)
@@ -64,7 +60,8 @@
          *
          * data: An object with the new data.
          */
-        update(data) {
+        update(data)
+        {
             // Check if target and data exists.
 
             let t = $(`#${this.target}`);
@@ -76,11 +73,11 @@
             // Update available data.
 
             if (data.title) {
-                t.find('.inner h3').text(data.title);
+                t.find('.inner h3').html(data.title);
             }
 
             if (data.text) {
-                t.find('.inner h5').text(data.text);
+                t.find('.inner h5').html(data.text);
             }
 
             if (data.icon) {
@@ -89,29 +86,6 @@
 
             if (data.url) {
                 t.find('.small-box-footer').attr('href', data.url);
-            }
-
-            if (data.theme) {
-                this.remove('theme');
-                t.addClass(`bg-${data.theme}`);
-            }
-        }
-
-        title() {
-            return $(`#${this.target}`).find('.inner h3').text();
-        }
-
-        remove(...data) {
-            let t = $(`#${this.target}`);
-            for (const d of data) {
-                switch (d) {
-                    case 'icon':
-                        t.find('.icon i').removeClass();
-                        break;
-                    case 'theme':
-                        t.removeClass((idx, clazz) => clazz.replace('small-box', ''));
-                        break;
-                }
             }
         }
 
