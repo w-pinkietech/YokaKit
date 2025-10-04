@@ -10,7 +10,7 @@ use App\Models\User;
 use App\Models\Worker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class LineControllerTest extends BaseControllerTest
+class LineControllerTest extends BaseControllerTestCase
 {
     use RefreshDatabase;
 

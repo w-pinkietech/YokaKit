@@ -4,7 +4,7 @@ namespace Tests\Feature\Controllers;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ServerDateControllerTest extends BaseControllerTest
+class ServerDateControllerTest extends BaseControllerTestCase
 {
     use RefreshDatabase;
 

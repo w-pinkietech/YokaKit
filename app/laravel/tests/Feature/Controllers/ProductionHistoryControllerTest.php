@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\Worker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ProductionHistoryControllerTest extends BaseControllerTest
+class ProductionHistoryControllerTest extends BaseControllerTestCase
 {
     use RefreshDatabase;
 

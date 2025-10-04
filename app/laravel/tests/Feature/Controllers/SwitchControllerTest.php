@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Worker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class SwitchControllerTest extends BaseControllerTest
+class SwitchControllerTest extends BaseControllerTestCase
 {
     use RefreshDatabase;
 
