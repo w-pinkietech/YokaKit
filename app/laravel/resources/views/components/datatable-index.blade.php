@@ -1,15 +1,18 @@
 <div class="col-md-12">
     <x-adminlte-card>
-        <x-adminlte-datatable id="{{ Str::random(16) }}">
+        <x-adminlte-datatable id="{{ Str::random(16) }}" :heads="$heads" :config="$config">
             {{ $slot }}
         </x-adminlte-datatable>
         @can('admin')
-            <x-slot name="footerSlot">
-                <a href="{{ $href }}" role="button" {{ $attributes->merge(['class' => 'btn btn-primary']) }}>
-                    <i class="fa-solid fa-lg fa-add"></i>
-                    {{ $add }}
-                </a>
-            </x-slot>
+            @if($attributes->has('href'))
+                <x-slot name="footerSlot">
+                    <a role="button" href="{{ $attributes->get('href') }}"
+                        class="{{ $attributes->merge(['class' => 'btn btn-primary'])->get('class') }}">
+                        <i class="fa-solid fa-lg fa-add"></i>
+                        {{ $add }}
+                    </a>
+                </x-slot>
+            @endif
         @endcan
     </x-adminlte-card>
 </div>

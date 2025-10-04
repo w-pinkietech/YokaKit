@@ -26,8 +26,8 @@
                         <x-input name="token" value="{{ session('token') }}" label="{{ __('yokakit.webapi_token') }}" />
                         <x-adminlte-button class="btn-primary" type="submit" label="{{ __('yokakit.generate_token') }}" />
                     </form>
-                @endcan
-            </x-adminlte-card>
+                </x-adminlte-card>
+            @endcan
         </div>
     </div>
 @endsection

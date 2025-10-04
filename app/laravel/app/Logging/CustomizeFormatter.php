@@ -54,16 +54,15 @@ class CustomizeFormatter
     }
 
     /**
-     * Undocumented function
-     *
-     * @param array<string, mixed> $record
-     * @return array<string, mixed>
+     * Add extra fields for Laravel 10 / Monolog 3.x compatibility
      */
-    public function addExtraFields(array $record): array
+    public function addExtraFields(\Monolog\LogRecord $record): \Monolog\LogRecord
     {
         $user = Auth::user();
-        $record['extra']['userid'] = $user->id ?? null;
-        $record['extra']['username'] = $user ? $user->name : null;
-        return $record;
+        $extra = $record->extra;
+        $extra['userid'] = $user->id ?? null;
+        $extra['username'] = $user ? $user->name : null;
+
+        return $record->with(extra: $extra);
     }
 }
