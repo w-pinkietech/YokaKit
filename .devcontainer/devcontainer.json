@@ -1,0 +1,228 @@
+{
+    "name": "YokaKit Development",
+    "dockerComposeFile": [
+        "../compose.yml",
+        "compose.override.yml"
+    ],
+    "service": "dev",
+    "remoteUser": "www-data",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                // PHP & Laravel Core
+                "bmewburn.vscode-intelephense-client",
+                "amiralizadeh9480.laravel-extra-intellisense",
+                "onecentlin.laravel-blade",
+                "ryannaddy.laravel-artisan",
+                "codingyu.laravel-goto-view",
+                "open-southeners.laravel-pint",
+
+                // PHP Quality & Testing
+                "recca0120.vscode-phpunit",
+                "sanderronde.phpstan-vscode",
+                "bmewburn.vscode-intelephense-client",
+
+                // Database
+                "mtxr.sqltools",
+                "mtxr.sqltools-driver-mysql",
+
+                // Frontend & Assets
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "bradlc.vscode-tailwindcss",
+
+                // Git & Development
+                "eamodio.gitlens",
+                "GitHub.vscode-pull-request-github",
+                "github.vscode-github-actions",
+
+                // DevOps & Containers
+                "ms-azuretools.vscode-docker",
+                "ms-vscode-remote.remote-containers",
+
+                // Code Quality & Documentation
+                "SonarSource.sonarlint-vscode",
+                "streetsidesoftware.code-spell-checker",
+                "editorconfig.editorconfig",
+                "redhat.vscode-yaml",
+
+                // Environment & Configuration
+                "mikestead.dotenv",
+                "ms-vscode.vscode-json",
+
+                // AI & Development Assistance
+                "anthropic.claude-dev",
+                "GitHub.copilot",
+                "GitHub.copilot-chat"
+            ],
+            "settings": {
+                // PHP Configuration
+                "php.validate.executablePath": "/usr/local/bin/php",
+                "intelephense.environment.phpVersion": "8.2.0",
+                "intelephense.completion.triggerParameterHints": true,
+                "intelephense.diagnostics.enable": true,
+
+                // Laravel Configuration
+                "laravel-goto-view.folders": [
+                    "resources/views"
+                ],
+                "laravel_extra_intellisense.baseUrl": "http://localhost:18081",
+
+                // Code Quality
+                "phpstan.enabled": true,
+                "phpstan.configFile": "./phpstan.neon",
+                "sonarlint.connectedMode.project": {
+                    "connectionId": "sonarcloud",
+                    "projectKey": "YOUR_YOKAKIT_SONARCLOUD_KEY"
+                },
+
+                // Editor Settings
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.fixAll.eslint": "explicit"
+                },
+                "files.associations": {
+                    "*.blade.php": "blade"
+                },
+
+                // Terminal
+                "terminal.integrated.defaultProfile.linux": "zsh",
+
+                // File Watching (Laravel-specific)
+                "files.watcherExclude": {
+                    "**/storage/logs/**": true,
+                    "**/bootstrap/cache/**": true,
+                    "**/coverage/**": true
+                },
+
+                // Database
+                "sqltools.connections": [
+                    {
+                        "name": "YokaKit Database",
+                        "driver": "MySQL",
+                        "host": "db",
+                        "database": "yokakit",
+                        "username": "y",
+                        "password": "${localEnv:MYSQL_PASSWORD:P=PdZRSzTP1?}"
+                    }
+                ]
+            }
+        },
+        "codespaces": {
+            "repositories": {
+                "YOUR_ORG/YokaKit": {
+                    "permissions": {
+                        "contents": "read",
+                        "metadata": "read"
+                    }
+                }
+            },
+            "extensions": [
+                // PHP & Laravel Core
+                "bmewburn.vscode-intelephense-client",
+                "amiralizadeh9480.laravel-extra-intellisense",
+                "onecentlin.laravel-blade",
+                "ryannaddy.laravel-artisan",
+                "codingyu.laravel-goto-view",
+                "open-southeners.laravel-pint",
+
+                // PHP Quality & Testing
+                "recca0120.vscode-phpunit",
+                "sanderronde.phpstan-vscode",
+
+                // Database
+                "mtxr.sqltools",
+                "mtxr.sqltools-driver-mysql",
+
+                // Frontend & Assets
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "bradlc.vscode-tailwindcss",
+
+                // Git & Development
+                "eamodio.gitlens",
+                "GitHub.vscode-pull-request-github",
+                "github.vscode-github-actions",
+
+                // DevOps & Containers
+                "ms-azuretools.vscode-docker",
+
+                // Code Quality & Documentation
+                "SonarSource.sonarlint-vscode",
+                "streetsidesoftware.code-spell-checker",
+                "editorconfig.editorconfig",
+                "redhat.vscode-yaml",
+
+                // Environment & Configuration
+                "mikestead.dotenv",
+                "ms-vscode.vscode-json",
+
+                // AI & Development Assistance
+                "anthropic.claude-dev",
+                "GitHub.copilot",
+                "GitHub.copilot-chat"
+            ],
+            "settings": {
+                // PHP Configuration
+                "php.validate.executablePath": "/usr/local/bin/php",
+                "intelephense.environment.phpVersion": "8.2.0",
+                "intelephense.completion.triggerParameterHints": true,
+                "intelephense.diagnostics.enable": true,
+
+                // Laravel Configuration
+                "laravel-goto-view.folders": [
+                    "resources/views"
+                ],
+                "laravel_extra_intellisense.baseUrl": "https://$CODESPACE_NAME-18081.app.github.dev",
+
+                // Code Quality
+                "phpstan.enabled": true,
+                "phpstan.configFile": "./phpstan.neon",
+                "sonarlint.connectedMode.project": {
+                    "connectionId": "sonarcloud",
+                    "projectKey": "YOUR_YOKAKIT_SONARCLOUD_KEY"
+                },
+
+                // Editor Settings
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.fixAll.eslint": "explicit"
+                },
+                "files.associations": {
+                    "*.blade.php": "blade"
+                },
+
+                // Terminal
+                "terminal.integrated.defaultProfile.linux": "zsh",
+
+                // File Watching
+                "files.watcherExclude": {
+                    "**/node_modules/**": true,
+                    "**/vendor/**": true,
+                    "**/storage/logs/**": true,
+                    "**/bootstrap/cache/**": true,
+                    "**/coverage/**": true
+                }
+            }
+        }
+    },
+    "forwardPorts": [
+        18081,
+        6002
+    ],
+    "overrideCommand": false,
+    "initializeCommand": "chmod +x ./setup.sh && yes yokakit | ./setup.sh",
+    "postCreateCommand": "bash -c ./.devcontainer/post-create.sh",
+    "postStartCommand": "php artisan optimize:clear",
+    "postAttachCommand": "echo 'DevContainer ready! Application: http://localhost:18081'",
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "configureZshAsDefaultShell": true,
+            "installOhMyZsh": true,
+            "nonFreePackages": true
+        }
+    }
+}
