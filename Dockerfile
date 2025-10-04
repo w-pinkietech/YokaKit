@@ -68,7 +68,7 @@ COPY --from=builder --chown=www-data:www-data /var/www/html .
 COPY docker/app/apache/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # Copy environment file
-COPY .env /var/www/html/.env
+COPY .env.example /var/www/html/.env
 
 # Set proper permissions for specific directories
 RUN chmod -R 775 storage bootstrap/cache \
@@ -113,7 +113,7 @@ COPY app/laravel/app-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/app-entrypoint.sh
 
 # Copy environment file
-COPY .env /var/www/html/.env
+COPY .env.example /var/www/html/.env
 
 CMD ["/usr/local/bin/app-entrypoint.sh"]
 
