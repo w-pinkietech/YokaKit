@@ -7,7 +7,7 @@ use App\Models\Process;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ProcessControllerTest extends BaseControllerTest
+class ProcessControllerTest extends BaseControllerTestCase
 {
     use RefreshDatabase;
 

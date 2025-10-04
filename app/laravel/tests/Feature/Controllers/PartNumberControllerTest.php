@@ -7,7 +7,7 @@ use App\Models\PartNumber;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class PartNumberControllerTest extends BaseControllerTest
+class PartNumberControllerTest extends BaseControllerTestCase
 {
     use RefreshDatabase;
 

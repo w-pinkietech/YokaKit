@@ -9,7 +9,7 @@ use Tests\TestCase;
 /**
  * Base test class for controller feature tests
  */
-abstract class BaseControllerTest extends TestCase
+abstract class BaseControllerTestCase extends TestCase
 {
     use RefreshDatabase;
 

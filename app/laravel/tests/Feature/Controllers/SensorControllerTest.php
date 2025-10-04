@@ -10,7 +10,7 @@ use App\Models\Sensor;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class SensorControllerTest extends BaseControllerTest
+class SensorControllerTest extends BaseControllerTestCase
 {
     use RefreshDatabase;
 

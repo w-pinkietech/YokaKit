@@ -68,7 +68,7 @@ COPY --from=builder --chown=www-data:www-data /var/www/html .
 COPY docker/app/apache/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # Copy environment file
-COPY .env /var/www/html/.env
+COPY app/laravel/.env.example /var/www/html/.env
 
 # Set proper permissions for specific directories
 RUN chmod -R 775 storage bootstrap/cache \
@@ -101,7 +101,6 @@ RUN composer install --optimize-autoloader --no-cache --no-scripts && npm instal
 
 # Copy source code and configuration
 COPY app/laravel .
-COPY docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
 COPY docker/app/apache/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # Finalize development setup
@@ -113,7 +112,7 @@ COPY app/laravel/app-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/app-entrypoint.sh
 
 # Copy environment file
-COPY .env /var/www/html/.env
+COPY app/laravel/.env.example /var/www/html/.env
 
 CMD ["/usr/local/bin/app-entrypoint.sh"]
 
