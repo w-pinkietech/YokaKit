@@ -267,7 +267,7 @@ return [
         ['header' => 'menu'],
         [
             'text' => 'home',
-            'url' => '',
+            'url' => '/home',
             'icon' => 'fa-solid fa-fw fa-home',
         ],
         [
