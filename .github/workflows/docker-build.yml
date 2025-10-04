@@ -86,7 +86,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           target: ${{ matrix.environment }}
-          push: ${{ github.event_name != 'pull_request' && (github.event.inputs.push_to_registry == 'true' || github.ref == 'refs/heads/main') }}
+          push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.push_to_registry == 'true') }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.environment }}
@@ -166,8 +166,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.20.0
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-production
           format: 'sarif'

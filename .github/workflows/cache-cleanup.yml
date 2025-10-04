@@ -18,8 +18,8 @@ jobs:
         run: |
           echo "Starting cache cleanup..."
 
-          # Get all caches
-          gh api repos/${{ github.repository }}/actions/caches \
+          # Get all caches (with pagination to handle >100 caches)
+          gh api --paginate repos/${{ github.repository }}/actions/caches \
             --jq '.actions_caches[] | select(.created_at < (now - 604800 | strftime("%Y-%m-%dT%H:%M:%SZ"))) | .id' \
             > old_cache_ids.txt
 
