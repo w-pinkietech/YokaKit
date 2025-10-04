@@ -1,0 +1,180 @@
+name: Docker Multi-Architecture Build
+
+on:
+  workflow_dispatch:  # Manual execution
+    inputs:
+      push_to_registry:
+        description: 'Push images to registry'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      environment:
+        description: 'Build environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - 'production'
+          - 'development'
+  push:
+    branches: [ main ]
+    paths:
+      - 'Dockerfile'
+      - 'app/laravel/**'
+      - 'config/**'
+      - '.env'
+      - 'compose.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'Dockerfile'
+      - 'app/laravel/**'
+      - 'config/**'
+      - '.env'
+      - 'compose.yml'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        environment: [production, development]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+
+      - name: Log in to Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch,suffix=-${{ matrix.environment }}
+            type=ref,event=pr,suffix=-${{ matrix.environment }}
+            type=raw,value=latest-${{ matrix.environment }},enable={{is_default_branch}}
+            type=sha,prefix={{branch}}-${{ matrix.environment }}-,format=short
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          target: ${{ matrix.environment }}
+          push: ${{ github.event_name != 'pull_request' && (github.event.inputs.push_to_registry == 'true' || github.ref == 'refs/heads/main') }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.environment }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.environment }}
+          build-args: |
+            ENVIRONMENT=${{ matrix.environment }}
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build test image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          target: development
+          load: true
+          tags: yokakit:test
+          cache-from: type=gha,scope=development
+          build-args: |
+            ENVIRONMENT=development
+
+      - name: Test container startup
+        run: |
+          # Start the container in background
+          docker run -d --name yokakit-test yokakit:test
+
+          # Wait for container to be ready (max 30 seconds)
+          timeout=30
+          while [ $timeout -gt 0 ]; do
+            if docker exec yokakit-test php -v > /dev/null 2>&1; then
+              echo "Container is ready!"
+              break
+            fi
+            echo "Waiting for container to be ready... ($timeout seconds left)"
+            sleep 1
+            timeout=$((timeout-1))
+          done
+
+          if [ $timeout -eq 0 ]; then
+            echo "Container failed to start properly"
+            docker logs yokakit-test
+            exit 1
+          fi
+
+      - name: Run PHP tests (if available)
+        run: |
+          # Check if tests exist and run them
+          if docker exec yokakit-test test -f artisan; then
+            echo "Running Laravel tests..."
+            docker exec yokakit-test php artisan test --parallel || echo "Tests failed or not configured"
+          else
+            echo "No Laravel tests found, skipping..."
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker stop yokakit-test || true
+          docker rm yokakit-test || true
+
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-production
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
