@@ -8,11 +8,15 @@ ARG PHP_VERSION=8.2.27
 FROM php:${PHP_VERSION}-apache AS base
 
 # Install all system dependencies in one layer with cache mount
-RUN --mount=type=cache,target=/var/cache/apt \
-    --mount=type=cache,target=/var/lib/apt \
-    apt-get update && apt-get install -y \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    rm -f /etc/apt/apt.conf.d/docker-clean \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
+    ca-certificates \
+    && apt-get install -y --no-install-recommends \
     libfreetype6 libfreetype6-dev \
     libjpeg62-turbo libjpeg62-turbo-dev \
     libmariadb-dev libmariadb-dev-compat libmariadb3 \
@@ -22,8 +26,10 @@ RUN --mount=type=cache,target=/var/cache/apt \
     libzip-dev libzip4 \
     locales pkg-config unzip zip \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && a2enmod rewrite
+    && apt-get update \
+    && apt-get install -y --no-install-recommends nodejs \
+    && a2enmod rewrite \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN set -ex; \
@@ -82,11 +88,12 @@ EXPOSE 80
 FROM base AS development
 
 # Install development tools and PCOV in one layer
-RUN --mount=type=cache,target=/var/cache/apt \
-    --mount=type=cache,target=/var/lib/apt \
-    apt-get update && apt-get install -y \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y --no-install-recommends \
     gifsicle git jpegoptim optipng pngquant vim \
-    && pecl install pcov && docker-php-ext-enable pcov
+    && pecl install pcov && docker-php-ext-enable pcov \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy dependency files and install with dev dependencies
 COPY app/laravel/composer.json app/laravel/composer.lock app/laravel/package*.json ./
