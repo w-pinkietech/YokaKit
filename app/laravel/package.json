@@ -14,7 +14,7 @@
         "@popperjs/core": "^2.10.2",
         "@types/chart.js": "^2.9.37",
         "autoprefixer": "^10.4.5",
-        "axios": "^0.27",
+        "axios": "^0.30",
         "bootstrap": "~4.6.0",
         "bootstrap-colorpicker": "^3.4.0",
         "bootstrap-switch": "^3.4.0",
