@@ -1,4 +1,5 @@
 {
+    "name": "yokakit",
     "private": true,
     "scripts": {
         "dev": "npm run development",
