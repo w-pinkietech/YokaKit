@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     libwebp-dev libwebp7 \
     libzip-dev libzip4 \
     locales pkg-config unzip zip \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
     && apt-get update \
     && apt-get install -y --no-install-recommends nodejs \
     && a2enmod rewrite \

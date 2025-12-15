@@ -6,6 +6,9 @@
     ],
     "service": "dev",
     "remoteUser": "www-data",
+    "mounts": [
+        "type=bind,source=${localEnv:HOME}/.ssh,target=${localEnv:HOME}/.ssh,readonly"
+    ],
     "workspaceFolder": "/workspace",
     "customizations": {
         "vscode": {
@@ -17,40 +20,32 @@
                 "ryannaddy.laravel-artisan",
                 "codingyu.laravel-goto-view",
                 "open-southeners.laravel-pint",
-
                 // PHP Quality & Testing
                 "recca0120.vscode-phpunit",
                 "sanderronde.phpstan-vscode",
                 "bmewburn.vscode-intelephense-client",
-
                 // Database
                 "mtxr.sqltools",
                 "mtxr.sqltools-driver-mysql",
-
                 // Frontend & Assets
                 "dbaeumer.vscode-eslint",
                 "esbenp.prettier-vscode",
                 "bradlc.vscode-tailwindcss",
-
                 // Git & Development
                 "eamodio.gitlens",
                 "GitHub.vscode-pull-request-github",
                 "github.vscode-github-actions",
-
                 // DevOps & Containers
                 "ms-azuretools.vscode-docker",
                 "ms-vscode-remote.remote-containers",
-
                 // Code Quality & Documentation
                 "SonarSource.sonarlint-vscode",
                 "streetsidesoftware.code-spell-checker",
                 "editorconfig.editorconfig",
                 "redhat.vscode-yaml",
-
                 // Environment & Configuration
                 "mikestead.dotenv",
                 "ms-vscode.vscode-json",
-
                 // AI & Development Assistance
                 "anthropic.claude-dev",
                 "GitHub.copilot",
@@ -62,13 +57,11 @@
                 "intelephense.environment.phpVersion": "8.2.0",
                 "intelephense.completion.triggerParameterHints": true,
                 "intelephense.diagnostics.enable": true,
-
                 // Laravel Configuration
                 "laravel-goto-view.folders": [
                     "resources/views"
                 ],
                 "laravel_extra_intellisense.baseUrl": "http://localhost:18081",
-
                 // Code Quality
                 "phpstan.enabled": true,
                 "phpstan.configFile": "./phpstan.neon",
@@ -76,7 +69,6 @@
                     "connectionId": "sonarcloud",
                     "projectKey": "YOUR_YOKAKIT_SONARCLOUD_KEY"
                 },
-
                 // Editor Settings
                 "editor.formatOnSave": true,
                 "editor.codeActionsOnSave": {
@@ -85,17 +77,14 @@
                 "files.associations": {
                     "*.blade.php": "blade"
                 },
-
                 // Terminal
                 "terminal.integrated.defaultProfile.linux": "zsh",
-
                 // File Watching (Laravel-specific)
                 "files.watcherExclude": {
                     "**/storage/logs/**": true,
                     "**/bootstrap/cache/**": true,
                     "**/coverage/**": true
                 },
-
                 // Database
                 "sqltools.connections": [
                     {
@@ -126,38 +115,30 @@
                 "ryannaddy.laravel-artisan",
                 "codingyu.laravel-goto-view",
                 "open-southeners.laravel-pint",
-
                 // PHP Quality & Testing
                 "recca0120.vscode-phpunit",
                 "sanderronde.phpstan-vscode",
-
                 // Database
                 "mtxr.sqltools",
                 "mtxr.sqltools-driver-mysql",
-
                 // Frontend & Assets
                 "dbaeumer.vscode-eslint",
                 "esbenp.prettier-vscode",
                 "bradlc.vscode-tailwindcss",
-
                 // Git & Development
                 "eamodio.gitlens",
                 "GitHub.vscode-pull-request-github",
                 "github.vscode-github-actions",
-
                 // DevOps & Containers
                 "ms-azuretools.vscode-docker",
-
                 // Code Quality & Documentation
                 "SonarSource.sonarlint-vscode",
                 "streetsidesoftware.code-spell-checker",
                 "editorconfig.editorconfig",
                 "redhat.vscode-yaml",
-
                 // Environment & Configuration
                 "mikestead.dotenv",
                 "ms-vscode.vscode-json",
-
                 // AI & Development Assistance
                 "anthropic.claude-dev",
                 "GitHub.copilot",
@@ -169,13 +150,11 @@
                 "intelephense.environment.phpVersion": "8.2.0",
                 "intelephense.completion.triggerParameterHints": true,
                 "intelephense.diagnostics.enable": true,
-
                 // Laravel Configuration
                 "laravel-goto-view.folders": [
                     "resources/views"
                 ],
                 "laravel_extra_intellisense.baseUrl": "https://$CODESPACE_NAME-18081.app.github.dev",
-
                 // Code Quality
                 "phpstan.enabled": true,
                 "phpstan.configFile": "./phpstan.neon",
@@ -183,7 +162,6 @@
                     "connectionId": "sonarcloud",
                     "projectKey": "YOUR_YOKAKIT_SONARCLOUD_KEY"
                 },
-
                 // Editor Settings
                 "editor.formatOnSave": true,
                 "editor.codeActionsOnSave": {
@@ -192,10 +170,8 @@
                 "files.associations": {
                     "*.blade.php": "blade"
                 },
-
                 // Terminal
                 "terminal.integrated.defaultProfile.linux": "zsh",
-
                 // File Watching
                 "files.watcherExclude": {
                     "**/node_modules/**": true,
@@ -212,9 +188,8 @@
         6002
     ],
     "overrideCommand": false,
-    "initializeCommand": "chmod +x ./setup.sh && yes yokakit | ./setup.sh",
     "postCreateCommand": "bash -c ./.devcontainer/post-create.sh",
-    "postStartCommand": "php artisan optimize:clear",
+    "postStartCommand": "php app/laravel/artisan optimize:clear",
     "postAttachCommand": "echo 'DevContainer ready! Application: http://localhost:18081'",
     "features": {
         "ghcr.io/devcontainers/features/github-cli:1": {},
