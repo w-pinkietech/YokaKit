@@ -40,7 +40,8 @@
                 "ms-vscode.vscode-json",
                 "GitHub.copilot",
                 "GitHub.copilot-chat",
-                "anthropic.claude-code"
+                "anthropic.claude-code",
+                "damms005.devdb"
             ],
             "settings": {
                 // PHP Configuration

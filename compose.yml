@@ -1,3 +1,4 @@
+name: yokakit
 services:
   web-app:
     build:
@@ -34,7 +35,7 @@ services:
     container_name: yokakit-db
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD}" ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -53,7 +54,7 @@ services:
     image: eclipse-mosquitto:latest
     container_name: yokakit-mqtt-broker
     ports:
-      - "18830:1883"  # MQTT標準ポート
+      - "18830:1883" # MQTT標準ポート
     networks:
       - yokakit
     volumes:

@@ -22,7 +22,7 @@
     <env name="DB_DATABASE" value="yokakit_test"/>
     <env name="DB_HOST" value="db"/>
     <env name="DB_USERNAME" value="root"/>
-    <env name="DB_PASSWORD" value="yokakit_password"/>
+    <env name="DB_PASSWORD" value="yokakit-db-password"/>
     <env name="MAIL_MAILER" value="array"/>
     <env name="QUEUE_CONNECTION" value="sync"/>
     <env name="SESSION_DRIVER" value="array"/>

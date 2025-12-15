@@ -87,9 +87,9 @@ jobs:
           composer install --no-interaction --no-scripts --no-progress --prefer-dist
         working-directory: app/laravel
 
-      - name: Copy .env.test
+      - name: Copy .env.testing
         run: |
-          cp .env.test .env
+          cp .env.testing .env
         working-directory: app/laravel
 
       - name: Generate key
