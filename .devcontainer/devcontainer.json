@@ -85,10 +85,10 @@
                         "driver": "MySQL",
                         "host": "db",
                         "database": "yokakit",
-                        "username": "y",
-                        "password": "${localEnv:MYSQL_PASSWORD:P=PdZRSzTP1?}"
+                        "username": "${localEnv:MYSQL_USER:yokakit}",
+                        "password": "${localEnv:MYSQL_PASSWORD:yokakit-db-password}"
                     }
-                ]
+                ],
             }
         },
         "codespaces": {
