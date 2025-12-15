@@ -40,6 +40,11 @@ php artisan view:clear
 echo "Running database migrations..."
 php artisan migrate --force
 
+# Create test database
+echo "Creating test database..."
+docker compose exec db bash -c 'mysql -u root -p$MARIADB_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS yokakit_test;"'
+php artisan migrate --force --env=testing
+
 # Build frontend assets (one-off build, not watch mode)
 echo "Building frontend assets..."
 npm run production
