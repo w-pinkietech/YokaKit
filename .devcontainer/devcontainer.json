@@ -13,43 +13,34 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                // PHP & Laravel Core
                 "bmewburn.vscode-intelephense-client",
                 "amiralizadeh9480.laravel-extra-intellisense",
                 "onecentlin.laravel-blade",
                 "ryannaddy.laravel-artisan",
                 "codingyu.laravel-goto-view",
                 "open-southeners.laravel-pint",
-                // PHP Quality & Testing
                 "recca0120.vscode-phpunit",
                 "sanderronde.phpstan-vscode",
                 "bmewburn.vscode-intelephense-client",
-                // Database
                 "mtxr.sqltools",
                 "mtxr.sqltools-driver-mysql",
-                // Frontend & Assets
                 "dbaeumer.vscode-eslint",
                 "esbenp.prettier-vscode",
                 "bradlc.vscode-tailwindcss",
-                // Git & Development
                 "eamodio.gitlens",
                 "GitHub.vscode-pull-request-github",
                 "github.vscode-github-actions",
-                // DevOps & Containers
                 "ms-azuretools.vscode-docker",
                 "ms-vscode-remote.remote-containers",
-                // Code Quality & Documentation
                 "SonarSource.sonarlint-vscode",
                 "streetsidesoftware.code-spell-checker",
                 "editorconfig.editorconfig",
                 "redhat.vscode-yaml",
-                // Environment & Configuration
                 "mikestead.dotenv",
                 "ms-vscode.vscode-json",
-                // AI & Development Assistance
-                "anthropic.claude-dev",
                 "GitHub.copilot",
-                "GitHub.copilot-chat"
+                "GitHub.copilot-chat",
+                "anthropic.claude-code"
             ],
             "settings": {
                 // PHP Configuration
@@ -57,6 +48,7 @@
                 "intelephense.environment.phpVersion": "8.2.0",
                 "intelephense.completion.triggerParameterHints": true,
                 "intelephense.diagnostics.enable": true,
+                "phpunit.phpunit": "/workspace/app/laravel/vendor/bin/phpunit",
                 // Laravel Configuration
                 "laravel-goto-view.folders": [
                     "resources/views"
@@ -67,7 +59,7 @@
                 "phpstan.configFile": "./phpstan.neon",
                 "sonarlint.connectedMode.project": {
                     "connectionId": "sonarcloud",
-                    "projectKey": "YOUR_YOKAKIT_SONARCLOUD_KEY"
+                    "projectKey": "w-pinkietech_YokaKit"
                 },
                 // Editor Settings
                 "editor.formatOnSave": true,
@@ -99,14 +91,6 @@
             }
         },
         "codespaces": {
-            "repositories": {
-                "YOUR_ORG/YokaKit": {
-                    "permissions": {
-                        "contents": "read",
-                        "metadata": "read"
-                    }
-                }
-            },
             "extensions": [
                 // PHP & Laravel Core
                 "bmewburn.vscode-intelephense-client",
@@ -140,7 +124,7 @@
                 "mikestead.dotenv",
                 "ms-vscode.vscode-json",
                 // AI & Development Assistance
-                "anthropic.claude-dev",
+                "anthropic.claude-code",
                 "GitHub.copilot",
                 "GitHub.copilot-chat"
             ],
@@ -150,6 +134,7 @@
                 "intelephense.environment.phpVersion": "8.2.0",
                 "intelephense.completion.triggerParameterHints": true,
                 "intelephense.diagnostics.enable": true,
+                "phpunit.phpunit": "/workspace/app/laravel/vendor/bin/phpunit",
                 // Laravel Configuration
                 "laravel-goto-view.folders": [
                     "resources/views"
@@ -160,7 +145,7 @@
                 "phpstan.configFile": "./phpstan.neon",
                 "sonarlint.connectedMode.project": {
                     "connectionId": "sonarcloud",
-                    "projectKey": "YOUR_YOKAKIT_SONARCLOUD_KEY"
+                    "projectKey": "w-pinkietech_YokaKit"
                 },
                 // Editor Settings
                 "editor.formatOnSave": true,
@@ -198,6 +183,7 @@
             "configureZshAsDefaultShell": true,
             "installOhMyZsh": true,
             "nonFreePackages": true
-        }
+        },
+        "ghcr.io/anthropics/devcontainer-features/claude-code:latest": {}
     }
 }
