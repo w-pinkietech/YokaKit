@@ -7,6 +7,11 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions:
+  contents: read
+  actions: read
+  pull-requests: write
+
 jobs:
   sonarqube:
     name: Test and Analyze (PHP ${{ matrix.php }})
