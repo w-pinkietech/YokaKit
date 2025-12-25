@@ -21,9 +21,9 @@ return new class extends Migration
             // 品番ID
             $table->unsignedBigInteger('part_number_id')->comment(__('yokakit.target_id', ['target' => __('yokakit.part_number')]));
             // サイクルタイム
-            $table->unsignedFloat('cycle_time', 8, 3)->comment(__('yokakit.cycle_time'));
+            $table->decimal('cycle_time', 8, 3)->unsigned()->comment(__('yokakit.cycle_time'));
             // オーバータイム
-            $table->unsignedFloat('over_time', 8, 3)->comment(__('yokakit.over_time'));
+            $table->decimal('over_time', 8, 3)->unsigned()->comment(__('yokakit.over_time'));
             // タイムスタンプ
             $table->timestamps();
             // 複合ユニーク

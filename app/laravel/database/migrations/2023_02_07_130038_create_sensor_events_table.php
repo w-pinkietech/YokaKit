@@ -34,7 +34,7 @@ return new class extends Migration
             // 信号
             $table->boolean('signal')->comment(__('yokakit.signal'));
             // 値
-            $table->float('value', 8, 3);
+            $table->decimal('value', 8, 3);
             // タイムスタンプ
             $table->timestamp('at', 3)->index()->default(DB::raw('CURRENT_TIMESTAMP'));
             // 外部キー

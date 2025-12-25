@@ -29,9 +29,9 @@ return new class extends Migration
             // 品番名
             $table->string('part_number_name', 32)->comment(__('yokakit.target_name', ['target' => __('yokakit.part_number')]));
             // サイクルタイム
-            $table->unsignedFloat('cycle_time', 8, 3)->comment(__('yokakit.cycle_time'));
+            $table->decimal('cycle_time', 8, 3)->unsigned()->comment(__('yokakit.cycle_time'));
             // オーバータイム
-            $table->unsignedFloat('over_time', 8, 3)->comment(__('yokakit.over_time'));
+            $table->decimal('over_time', 8, 3)->unsigned()->comment(__('yokakit.over_time'));
             // 目標値
             $table->integer('goal')->nullable()->comment(__('yokakit.goal'));
             // 開始

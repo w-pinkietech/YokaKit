@@ -93,7 +93,7 @@ FROM base AS development
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y --no-install-recommends \
-    gifsicle git jpegoptim optipng pngquant vim \
+    gifsicle git jpegoptim mariadb-client optipng pngquant vim \
     && pecl install pcov && docker-php-ext-enable pcov \
     && rm -rf /var/lib/apt/lists/*
 
