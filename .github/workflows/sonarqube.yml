@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      DB_HOST: 127.0.0.1
       DB_TEST_HOST: 127.0.0.1
       DB_TEST_DATABASE: yokakit_test
       DB_TEST_USERNAME: root

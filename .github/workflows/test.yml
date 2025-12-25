@@ -19,6 +19,7 @@ jobs:
 
     env:
       php-extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo
+      DB_HOST: 127.0.0.1
       DB_TEST_HOST: 127.0.0.1
       DB_TEST_DATABASE: yokakit_test
       DB_TEST_USERNAME: root
