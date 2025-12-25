@@ -12,6 +12,12 @@ jobs:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
 
+    env:
+      DB_TEST_HOST: 127.0.0.1
+      DB_TEST_DATABASE: yokakit_test
+      DB_TEST_USERNAME: root
+      DB_TEST_PASSWORD: yokakit-db-password
+
     services:
       mysql:
         image: mariadb:10.11
@@ -77,26 +83,12 @@ jobs:
           cp .env.test .env
           php artisan key:generate
           php artisan config:cache
-          php artisan migrate --force
+          php artisan migrate:fresh --database=mysql_test --force
         working-directory: app/laravel
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: yokakit_test
-          DB_USERNAME: root
-          DB_PASSWORD: yokakit-db-password
 
       - name: Run tests with coverage in parallel
         run: php artisan test --parallel --processes=4 --coverage --coverage-clover=coverage/clover.xml
         working-directory: app/laravel
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: yokakit_test
-          DB_USERNAME: root
-          DB_PASSWORD: yokakit-db-password
 
       - name: Fix coverage paths
         run: |
