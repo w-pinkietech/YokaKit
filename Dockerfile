@@ -105,7 +105,9 @@ COPY docker/app/apache/sites-available/000-default.conf /etc/apache2/sites-avail
 
 # Finalize development setup
 RUN composer dump-autoload --optimize \
-    && chmod -R 777 storage bootstrap/cache
+    && chmod -R 777 storage bootstrap/cache \
+    && chown -R www-data:www-data /var/www \
+    && chmod -R 755 /var/www
 
 # Copy and set up startup script
 COPY app/laravel/app-entrypoint.sh /usr/local/bin/

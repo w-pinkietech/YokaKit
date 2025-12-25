@@ -26,5 +26,8 @@ services:
       - 6002:6001 # Reverb WebSocket port
     extra_hosts:
       - host.docker.internal:host-gateway
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     networks:
       - yokakit
