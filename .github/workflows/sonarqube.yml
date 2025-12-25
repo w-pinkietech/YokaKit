@@ -16,7 +16,7 @@ jobs:
       mysql:
         image: mariadb:10.11
         env:
-          MYSQL_ROOT_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: yokakit-db-password
           MYSQL_DATABASE: yokakit_test
           MYSQL_ALLOW_EMPTY_PASSWORD: false
         ports:
@@ -85,7 +85,7 @@ jobs:
           DB_PORT: 3306
           DB_DATABASE: yokakit_test
           DB_USERNAME: root
-          DB_PASSWORD: password
+          DB_PASSWORD: yokakit-db-password
 
       - name: Run tests with coverage in parallel
         run: php artisan test --parallel --processes=4 --coverage --coverage-clover=coverage/clover.xml
@@ -96,7 +96,7 @@ jobs:
           DB_PORT: 3306
           DB_DATABASE: yokakit_test
           DB_USERNAME: root
-          DB_PASSWORD: password
+          DB_PASSWORD: yokakit-db-password
 
       - name: Fix coverage paths
         run: |
