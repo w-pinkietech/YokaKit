@@ -27,7 +27,7 @@ return new class extends Migration
             Schema::table('raspberry_pis', function (Blueprint $table) {
                 $table->decimal('cpu_temperature', 6, 1)
                     ->nullable()
-                    ->comment(__('yokakit.cpu_temperature'))
+                    ->comment('CPU Temperature')
                     ->change();
             });
         }
@@ -38,7 +38,7 @@ return new class extends Migration
                 $table->decimal('cpu_utilization', 5, 1)
                     ->unsigned()
                     ->nullable()
-                    ->comment(__('yokakit.cpu_utilization'))
+                    ->comment('CPU Utilization')
                     ->change();
             });
         }
@@ -47,8 +47,9 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      *
-     * 注意: ロールバックは double 型に戻すが、Laravel 11 では動作しない。
-     * Laravel 10 以前でのみロールバック可能。
+     * 注意: ロールバックは元の double 型に戻す。
+     * Laravel 11 では double() に精度パラメータを渡せないため、生SQL を使用。
+     * 元のスキーマ: cpu_temperature DOUBLE(8,2), cpu_utilization DOUBLE(8,2) UNSIGNED
      */
     public function down(): void
     {
@@ -56,20 +57,30 @@ return new class extends Migration
             return;
         }
 
-        // Laravel 11 では double() に精度パラメータを渡せないため、
-        // 生SQL でロールバックを行う
         $driver = DB::getDriverName();
 
         if ($driver === 'mysql') {
             DB::statement('ALTER TABLE `raspberry_pis` MODIFY `cpu_temperature` DOUBLE(8,2) NULL COMMENT ?', [
-                __('yokakit.cpu_temperature'),
+                'CPU Temperature',
             ]);
             DB::statement('ALTER TABLE `raspberry_pis` MODIFY `cpu_utilization` DOUBLE(8,2) UNSIGNED NULL COMMENT ?', [
-                __('yokakit.cpu_utilization'),
+                'CPU Utilization',
             ]);
         } elseif ($driver === 'pgsql') {
+            // PostgreSQL では UNSIGNED 制約がないため、型のみ変更
             DB::statement('ALTER TABLE "raspberry_pis" ALTER COLUMN "cpu_temperature" TYPE DOUBLE PRECISION');
+            DB::statement('ALTER TABLE "raspberry_pis" ALTER COLUMN "cpu_temperature" DROP NOT NULL');
+            DB::statement('COMMENT ON COLUMN "raspberry_pis"."cpu_temperature" IS \'CPU Temperature\'');
             DB::statement('ALTER TABLE "raspberry_pis" ALTER COLUMN "cpu_utilization" TYPE DOUBLE PRECISION');
+            DB::statement('ALTER TABLE "raspberry_pis" ALTER COLUMN "cpu_utilization" DROP NOT NULL');
+            DB::statement('COMMENT ON COLUMN "raspberry_pis"."cpu_utilization" IS \'CPU Utilization\'');
+        } elseif ($driver === 'sqlite') {
+            // SQLite ではカラム型の変更にテーブル再作成が必要だが、
+            // Schema::table の change() で対応可能
+            Schema::table('raspberry_pis', function (Blueprint $table) {
+                $table->double('cpu_temperature')->nullable()->change();
+                $table->double('cpu_utilization')->nullable()->change();
+            });
         }
     }
 
