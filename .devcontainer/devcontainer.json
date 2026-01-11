@@ -88,7 +88,7 @@
                         "username": "${localEnv:MYSQL_USER:yokakit}",
                         "password": "${localEnv:MYSQL_PASSWORD:yokakit-db-password}"
                     }
-                ],
+                ]
             }
         },
         "codespaces": {
@@ -174,7 +174,7 @@
         6002
     ],
     "overrideCommand": false,
-    "postCreateCommand": "bash -c ./.devcontainer/post-create.sh",
+    "postCreateCommand": "bash -c 'git config --global --add safe.directory /workspace && ./.devcontainer/post-create.sh'",
     "postStartCommand": "php app/laravel/artisan optimize:clear",
     "postAttachCommand": "echo 'DevContainer ready! Application: http://localhost:18081'",
     "features": {
