@@ -10,7 +10,7 @@
         <x-input-color name="chart_color" value="{{ $line->chart_color }}" label="{{ __('yokakit.color') }}" init="{{ $line->chart_color }}" required />
         <x-select name="raspberry_pi_id" label="{{ __('yokakit.raspberry_pi') }}" :options="$raspberryPiOptions" icon="raspberry-pi"
             selected="{{ $line->raspberry_pi_id }}" required />
-        <x-select name="pin_number" label="{{ __('yokakit.pin_number') }}" :options="$pinOptions" icon="map-pin" selected="{{ $line->pin_number }}" required />
+        <x-input name="pin_number" type="number" value="{{ $line->pin_number }}" label="{{ __('yokakit.pin_number') }}" icon="map-pin" required />
         <x-input-switch name="defective" label="{{ __('yokakit.defective') }}" checked="{{ $line->defective }}" />
         <x-select name="worker_id" label="{{ __('yokakit.worker') }}" :options="$workerOptions" icon="person" hide="true"
             selected="{{ $line->worker?->worker_id }}" />
