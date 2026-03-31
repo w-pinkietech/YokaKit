@@ -19,6 +19,11 @@ jobs:
 
     env:
       php-extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo
+      DB_HOST: 127.0.0.1
+      DB_TEST_HOST: 127.0.0.1
+      DB_TEST_DATABASE: yokakit_test
+      DB_TEST_USERNAME: root
+      DB_TEST_PASSWORD: yokakit-db-password
 
     services:
       mysql:
@@ -26,8 +31,8 @@ jobs:
         env:
           MARIADB_DATABASE: yokakit_test
           MARIADB_USER: yokakit
-          MARIADB_PASSWORD: password
-          MARIADB_ROOT_PASSWORD: password
+          MARIADB_PASSWORD: yokakit-db-password
+          MARIADB_ROOT_PASSWORD: yokakit-db-password
         ports:
           - 3306:3306
         options: >-
@@ -108,7 +113,7 @@ jobs:
 
       - name: Run Migrations
         run: |
-          php artisan migrate:fresh --seed
+          php artisan migrate:fresh --database=mysql_test --seed
         working-directory: app/laravel
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit

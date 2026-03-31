@@ -14,10 +14,11 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
     build-essential \
-    curl \
     ca-certificates \
+    curl \
     && apt-get install -y --no-install-recommends \
     libfreetype6 libfreetype6-dev \
+    libicu-dev \
     libjpeg62-turbo libjpeg62-turbo-dev \
     libmariadb-dev libmariadb-dev-compat libmariadb3 \
     libonig-dev libonig5 \
@@ -34,7 +35,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # Install PHP extensions
 RUN set -ex; \
     docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
-    docker-php-ext-install -j$(nproc) gd mbstring pdo_mysql exif pcntl bcmath zip
+    docker-php-ext-configure intl; \
+    docker-php-ext-install -j$(nproc) gd intl mbstring pdo_mysql exif pcntl bcmath zip
 
 # Install Composer and set environment
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -91,7 +93,7 @@ FROM base AS development
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y --no-install-recommends \
-    gifsicle git jpegoptim optipng pngquant vim \
+    gifsicle git jpegoptim mariadb-client optipng pngquant vim \
     && pecl install pcov && docker-php-ext-enable pcov \
     && rm -rf /var/lib/apt/lists/*
 

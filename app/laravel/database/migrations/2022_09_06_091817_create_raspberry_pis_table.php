@@ -21,9 +21,9 @@ return new class extends Migration
             // IPアドレス
             $table->ipAddress()->unique()->index()->comment(__('yokakit.ip_address'));
             // CPU温度
-            $table->double('cpu_temperature', 6, 1)->nullable()->comment(__('yokakit.cpu_temperature'));
+            $table->decimal('cpu_temperature', 6, 1)->nullable()->comment(__('yokakit.cpu_temperature'));
             // CPU使用率
-            $table->unsignedFloat('cpu_utilization', 5, 1)->nullable()->comment(__('yokakit.cpu_utilization'));
+            $table->decimal('cpu_utilization', 5, 1)->unsigned()->nullable()->comment(__('yokakit.cpu_utilization'));
             // タイムスタンプ
             $table->timestamps();
         });
