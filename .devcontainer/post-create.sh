@@ -3,6 +3,25 @@ set -e
 
 echo "Setting up YokaKit DevContainer environment..."
 
+# Fix git ownership issue
+echo "Fixing git ownership..."
+git config --global --add safe.directory /workspace || true
+git config --global --add safe.directory '*' || true
+
+# Ensure /var/www has proper permissions for Cursor Server
+echo "Setting up Cursor Server permissions..."
+mkdir -p /var/www/.cursor-server /var/www/.vscode-remote || true
+chown -R www-data:www-data /var/www/.cursor-server /var/www/.vscode-remote || true
+chmod -R 755 /var/www/.cursor-server /var/www/.vscode-remote || true
+
+# Test network connectivity
+echo "Testing network connectivity..."
+if ping -c 1 8.8.8.8 > /dev/null 2>&1; then
+    echo "✓ Network connectivity OK"
+else
+    echo "⚠ Network connectivity issue detected"
+fi
+
 # Navigate to Laravel directory (we're already in /var/www/html)
 cd /var/www/html
 
@@ -39,6 +58,11 @@ php artisan view:clear
 # Run database migrations
 echo "Running database migrations..."
 php artisan migrate --force
+
+# Create test database
+echo "Creating test database..."
+docker compose exec db bash -c 'mysql -u root -p$MARIADB_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS yokakit_test;"'
+php artisan migrate --force --env=testing
 
 # Build frontend assets (one-off build, not watch mode)
 echo "Building frontend assets..."

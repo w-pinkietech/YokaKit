@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     libwebp-dev libwebp7 \
     libzip-dev libzip4 \
     locales pkg-config unzip zip \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
     && apt-get update \
     && apt-get install -y --no-install-recommends nodejs \
     && a2enmod rewrite \
@@ -105,7 +105,9 @@ COPY docker/app/apache/sites-available/000-default.conf /etc/apache2/sites-avail
 
 # Finalize development setup
 RUN composer dump-autoload --optimize \
-    && chmod -R 777 storage bootstrap/cache
+    && chmod -R 777 storage bootstrap/cache \
+    && chown -R www-data:www-data /var/www \
+    && chmod -R 755 /var/www
 
 # Copy and set up startup script
 COPY app/laravel/app-entrypoint.sh /usr/local/bin/
